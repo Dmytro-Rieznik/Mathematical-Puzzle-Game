@@ -233,6 +233,31 @@ def solve_level(inputs, target_value, combinators_counts):
 
     return search(initial_nums, initial_comb)
 
+# Border spacing helper
+def get_spaced_border_positions(count, min_spacing=3):
+    """Pick `count` border positions with at least `min_spacing` manhattan distance between each pair."""
+    all_border = []
+    for i in range(1, 11):
+        all_border.append((i, 0))    # Top
+    for i in range(1, 11):
+        all_border.append((11, i))   # Right
+    for i in range(10, 0, -1):
+        all_border.append((i, 11))   # Bottom
+    for i in range(10, 0, -1):
+        all_border.append((0, i))    # Left
+
+    for attempt in range(200):
+        random.shuffle(all_border)
+        selected = []
+        for pos in all_border:
+            if all(abs(pos[0] - s[0]) + abs(pos[1] - s[1]) >= min_spacing for s in selected):
+                selected.append(pos)
+            if len(selected) == count:
+                return selected
+    # Fallback: just pick evenly spaced
+    step = max(1, len(all_border) // count)
+    return [all_border[i * step % len(all_border)] for i in range(count)]
+
 # Procedural Generator
 def generate_random_level(difficulty):
     if difficulty == "Easy":
@@ -242,6 +267,7 @@ def generate_random_level(difficulty):
         allowed_ops = ['plus', 'minus', 'multiply']
         decoy_combs_count = 0
         bridge_count = 0
+        min_spacing = 4
     elif difficulty == "Medium":
         num_ops = random.randint(2, 4)
         num_inputs = random.randint(3, 4)
@@ -249,6 +275,7 @@ def generate_random_level(difficulty):
         allowed_ops = ['plus', 'minus', 'multiply', 'divide', 'degree', 'root']
         decoy_combs_count = random.randint(0, 2)
         bridge_count = random.choice([0, 1])
+        min_spacing = 3
     else: # Hard
         num_ops = random.randint(4, 6)
         num_inputs = random.randint(4, 6)
@@ -256,6 +283,7 @@ def generate_random_level(difficulty):
         allowed_ops = ['plus', 'minus', 'multiply', 'divide', 'degree', 'root', 'degree_3', 'root_3']
         decoy_combs_count = random.randint(2, 4)
         bridge_count = random.randint(1, 3)
+        min_spacing = 3
 
     attempts = 0
     while attempts < 300:
@@ -268,39 +296,36 @@ def generate_random_level(difficulty):
                 inputs_vals.append(random.choice([1, 4, 9, 16, 25, 36, 49, 64]))
             else:
                 inputs_vals.append(random.randint(2, 15))
-                
+
         pool = [{"val": v, "used_inputs": [i]} for i, v in enumerate(inputs_vals)]
         used_ops = {op: 0 for op in COMBINATOR_TYPES}
-        
+
         success = True
         for _ in range(num_ops):
             if not pool:
                 success = False
                 break
-                
+
             op = random.choice(allowed_ops)
             is_binary = op in ['plus', 'minus', 'multiply', 'divide']
-            
+
             if is_binary:
                 if len(pool) < 2:
                     new_val = random.randint(2, 15)
                     inputs_vals.append(new_val)
                     pool.append({"val": new_val, "used_inputs": [len(inputs_vals) - 1]})
-                    
+
                 node1 = random.choice(pool)
                 pool.remove(node1)
                 node2 = random.choice(pool)
                 pool.remove(node2)
-                
+
                 val1, val2 = node1["val"], node2["val"]
                 res = None
                 if op == 'plus':
                     res = val1 + val2
                 elif op == 'minus':
-                    if val1 >= val2:
-                        res = val1 - val2
-                    else:
-                        res = val2 - val1
+                    res = max(val1, val2) - min(val1, val2)
                 elif op == 'multiply':
                     res = val1 * val2
                 elif op == 'divide':
@@ -308,16 +333,16 @@ def generate_random_level(difficulty):
                         res = val1 // val2
                     elif val1 != 0 and val2 % val1 == 0:
                         res = val2 // val1
-                        
+
                 if res is None or abs(res) > max_target or res <= 0:
                     pool.append(node1)
                     pool.append(node2)
                     continue
-                    
+
                 used_ops[op] += 1
                 merged_used = list(set(node1["used_inputs"] + node2["used_inputs"]))
                 pool.append({"val": res, "used_inputs": merged_used})
-                
+
             else:
                 node = random.choice(pool)
                 pool.remove(node)
@@ -336,14 +361,14 @@ def generate_random_level(difficulty):
                     r = int(round(math.cbrt(val)))
                     if r ** 3 == val:
                         res = r
-                        
+
                 if res is None or abs(res) > max_target or res <= 0:
                     pool.append(node)
                     continue
-                    
+
                 used_ops[op] += 1
                 pool.append({"val": res, "used_inputs": node["used_inputs"]})
-                
+
         while len(pool) > 1 and success:
             node1 = pool.pop(0)
             node2 = pool.pop(0)
@@ -352,55 +377,46 @@ def generate_random_level(difficulty):
             if op == 'plus':
                 res = node1["val"] + node2["val"]
             elif op == 'minus':
-                if node1["val"] >= node2["val"]:
-                    res = node1["val"] - node2["val"]
-                else:
-                    res = node2["val"] - node1["val"]
+                res = max(node1["val"], node2["val"]) - min(node1["val"], node2["val"])
             elif op == 'multiply':
                 res = node1["val"] * node2["val"]
-                
+
             if res is None or abs(res) > max_target * 1.5 or res <= 0:
                 success = False
                 break
-                
+
             used_ops[op] += 1
             merged_used = list(set(node1["used_inputs"] + node2["used_inputs"]))
             pool.append({"val": res, "used_inputs": merged_used})
-            
+
         if not success or not pool:
             continue
-            
+
         final_node = pool[0]
         target_val = final_node["val"]
         used_indices = sorted(final_node["used_inputs"])
         if len(used_indices) < 2:
             continue
-            
+
         final_inputs_vals = [inputs_vals[i] for i in used_indices]
-        
-        # Grid placement
-        border_coords = []
-        for i in range(1, 11):
-            border_coords.append((i, 0))   # Top
-            border_coords.append((i, 11))  # Bottom
-            border_coords.append((0, i))   # Left
-            border_coords.append((11, i))  # Right
-            
-        random.shuffle(border_coords)
-        if len(border_coords) < len(final_inputs_vals) + 1:
+
+        # Grid placement with guaranteed spacing
+        needed = len(final_inputs_vals) + 1  # +1 for output
+        positions = get_spaced_border_positions(needed, min_spacing)
+        if len(positions) < needed:
             continue
-            
-        out_x, out_y = border_coords.pop()
+
+        out_x, out_y = positions[0]
         inputs_list = []
-        for val in final_inputs_vals:
-            ix, iy = border_coords.pop()
+        for k, val in enumerate(final_inputs_vals):
+            ix, iy = positions[k + 1]
             inputs_list.append({"x": ix, "y": iy, "value": val})
-            
+
         # Add decoys
         for _ in range(decoy_combs_count):
             decoy_op = random.choice(COMBINATOR_TYPES)
             used_ops[decoy_op] += 1
-            
+
         # Verify
         sol = solve_level(final_inputs_vals, target_val, used_ops)
         if sol is not None:
@@ -411,7 +427,7 @@ def generate_random_level(difficulty):
                 "bridge": bridge_count,
                 "mapSize": {"rows": 12, "columns": 12}
             }
-            
+
     # Fallback default level
     return {
         "combinators": [{"type": op, "count": 1 if op == 'plus' else 0} for op in COMBINATOR_TYPES],
@@ -615,11 +631,11 @@ def main():
                             editor_combinators[op] += 1
                             validation_state = 'unverified'
                             
-                    # Difficulty buttons
+                    # Difficulty buttons (must match draw coordinates exactly)
                     diff_y = 385
-                    diffs = [("Easy", 905), ("Medium", 985), ("Hard", 1085)]
-                    for d_name, d_x in diffs:
-                        d_rect = pygame.Rect(d_x, diff_y, 75, 26)
+                    diffs = [("Easy", 1065, 60), ("Medium", 1130, 65), ("Hard", 1200, 60)]
+                    for d_name, d_x, d_w in diffs:
+                        d_rect = pygame.Rect(d_x, diff_y, d_w, 26)
                         if d_rect.collidepoint(mx, my):
                             generation_difficulty = d_name
                             
