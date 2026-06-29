@@ -61,12 +61,12 @@ Demonstrates subtraction and the priority connection mechanic.
 
 <img src="screenshots/level_2_completed.png" width="600">
 
-### Level 4 (Empty)
+### Level 4
 Initial state of one of the larger puzzles.
 
 <img src="screenshots/level_4_empty.png" width="600">
 
-### Level 4 (Solved)
+### Level 4
 Completed solution demonstrating mathematical operators and wire routing.
 
 <img src="screenshots/level_4_completed.png" width="600">
