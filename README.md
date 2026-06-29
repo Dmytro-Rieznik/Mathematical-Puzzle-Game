@@ -52,20 +52,24 @@ The project includes:
 ## Screenshots
 
 ### Level 1
-
 Introduction to the core gameplay mechanics.
 
-### Level 2
+![Level 1](screenshots/level_1_completed.png)
 
+### Level 2
 Demonstrates subtraction and the priority connection mechanic.
 
-### Level 4 (Empty)
+![Level 2](screenshots/level_2_completed.png)
 
+### Level 4 (Empty)
 Initial state of one of the larger puzzles.
 
-### Level 4 (Solved)
+![Level 4 Empty](screenshots/level_4_empty.png)
 
+### Level 4 (Solved)
 Completed solution demonstrating mathematical operators and wire routing.
+
+![Level 4 Solved](screenshots/level_4_completed.png)
 
 ---
 
