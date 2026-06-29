@@ -1,0 +1,120 @@
+{
+  "levels": [
+    {
+      "id": 0,
+      "combinators":
+      [
+          {"type": "plus", "count": 1},
+          {"type": "minus", "count": 0},
+          {"type": "multiply", "count": 0},
+          {"type": "divide", "count": 0},
+          {"type": "degree", "count": 0},
+          {"type": "root", "count": 0},
+          {"type": "degree_3", "count": 0},
+          {"type": "root_3", "count": 0}
+      ],
+      "output": {"x": 4, "y": 0, "target_value": 10},
+      "inputs": [
+        {"x": 11, "y": 2, "value": 3},
+        {"x": 2, "y": 11, "value": 7}
+      ],
+      "bridge": 0,
+      "mapSize": {"rows": 12, "columns": 12}
+    },
+    {
+      "id": 1,
+      "combinators":
+      [
+          {"type": "plus", "count": 1},
+          {"type": "minus", "count": 1},
+          {"type": "multiply", "count": 0},
+          {"type": "divide", "count": 0},
+          {"type": "degree", "count": 0},
+          {"type": "root", "count": 0},
+          {"type": "degree_3", "count": 0},
+          {"type": "root_3", "count": 0}
+      ],
+      "output": {"x": 7, "y": 0, "target_value": 11},
+      "inputs": [
+        {"x": 0, "y": 5, "value": 3},
+        {"x": 11, "y": 9, "value": 7},
+        {"x": 2, "y": 11, "value": 7}
+      ],
+      "bridge": 0,
+      "mapSize": {"rows": 12, "columns": 12}
+    },
+    {
+      "id": 2,
+      "combinators":
+      [
+          {"type": "plus", "count": 0},
+          {"type": "minus", "count": 1},
+          {"type": "multiply", "count": 1},
+          {"type": "divide", "count": 1},
+          {"type": "degree", "count": 0},
+          {"type": "root", "count": 1},
+          {"type": "degree_3", "count": 0},
+          {"type": "root_3", "count": 0}
+      ],
+      "output": {"x": 0, "y": 8, "target_value": 4},
+      "inputs": [
+        {"x": 0, "y": 4, "value": 5},
+        {"x": 4, "y": 0, "value": 64},
+        {"x": 4, "y": 11, "value": 10},
+        {"x": 11, "y": 6, "value": 6}
+      ],
+      "bridge": 1,
+      "mapSize": {"rows": 12, "columns": 12}
+    },
+    {
+      "id": 3,
+      "combinators":
+      [
+          {"type": "plus", "count": 1},
+          {"type": "minus", "count": 2},
+          {"type": "multiply", "count": 1},
+          {"type": "divide", "count": 0},
+          {"type": "degree", "count": 0},
+          {"type": "root", "count": 1},
+          {"type": "degree_3", "count": 2},
+          {"type": "root_3", "count": 0}
+      ],
+      "output": {"x": 11, "y": 9, "target_value": 800},
+      "inputs": [
+        {"x": 4, "y": 0, "value": 10},
+        {"x": 0, "y": 2, "value": 20},
+        {"x": 4, "y": 11, "value": 4},
+        {"x": 0, "y": 6, "value": 90},
+        {"x": 11, "y": 4, "value": 6}
+      ],
+      "bridge": 1,
+      "mapSize": {"rows": 12, "columns": 12}
+    },
+    {
+      "id": 4,
+      "combinators":
+      [
+          {"type": "plus", "count": 2},
+          {"type": "minus", "count": 1},
+          {"type": "multiply", "count": 1},
+          {"type": "divide", "count": 2},
+          {"type": "degree", "count": 1},
+          {"type": "root", "count": 1},
+          {"type": "degree_3", "count": 1},
+          {"type": "root_3", "count": 1}
+      ],
+      "output": {"x": 0, "y": 10, "target_value": 106},
+      "inputs": [
+        {"x": 1, "y": 0, "value": 5},
+        {"x": 0, "y": 4, "value": 5},
+        {"x": 0, "y": 8, "value": 1000},
+        {"x": 9, "y": 0, "value": 3},
+        {"x": 11, "y": 5, "value": 37},
+        {"x": 11, "y": 8, "value": 100},
+        {"x": 8, "y": 11, "value": 4}
+      ],
+      "bridge": 3,
+      "mapSize": {"rows": 12, "columns": 12}
+    }
+  ]
+}
